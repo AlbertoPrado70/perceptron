@@ -5,7 +5,7 @@ const TILE_SIZE = 32;
 let fitness = 0;
 let player = {x: 1, y: 1}; 
 let last_position = {x: 1, y: 1}; 
-let ghost = [{x: 13, y: 13}, {x: 13, y: 13}];
+let ghost = {x: 13, y: 13};
 let direcciones = [{x: 0, y: -1}, {x: 1, y: 0}, {x: 0, y: 1}, {x: -1, y: 0}];
 
 let board = [
@@ -32,6 +32,17 @@ document.querySelector(".pacman").appendChild(app.view);
 let graphics = new PIXI.Graphics();
 app.stage.addChild(graphics);
 
+// Creamos nuestra población de neuronas
+let poblacion = [];
+let mejorNeurona = createNeuron();
+for(let i = 0; i < 20; i++) {
+    poblacion[i] = createNeuron();
+}
+
+let neuronaActual = 0; 
+let movimientoActual = 0;
+
+// BUCLE PRINCIPAL
 app.ticker.add(delta => {
 
     graphics.clear();
@@ -55,19 +66,43 @@ app.ticker.add(delta => {
     // Fantasma rojo
     graphics.lineStyle(0, 0x000);
     graphics.beginFill(0xff0000, 1);
-    graphics.drawCircle(ghost[0].x * TILE_SIZE + 16, ghost[0].y * TILE_SIZE + 16, TILE_SIZE / 2);
-    graphics.drawRect(ghost[0].x * TILE_SIZE, ghost[0].y * TILE_SIZE + 16, TILE_SIZE, TILE_SIZE / 2);
+    graphics.drawCircle(ghost.x * TILE_SIZE + 16, ghost.y * TILE_SIZE + 16, TILE_SIZE / 2);
+    graphics.drawRect(ghost.x * TILE_SIZE, ghost.y * TILE_SIZE + 16, TILE_SIZE, TILE_SIZE / 2);
     graphics.endFill();
-    
-    // // Fantasma morado
-    // graphics.lineStyle(0, 0x000);
-    // graphics.beginFill(0xff00ff, 1);
-    // graphics.drawCircle(ghost[1].x * TILE_SIZE + 16, ghost[1].y * TILE_SIZE + 16, TILE_SIZE / 2);
-    // graphics.drawRect(ghost[1].x * TILE_SIZE, ghost[1].y * TILE_SIZE + 16, TILE_SIZE, TILE_SIZE / 2);
-    // graphics.endFill();
 
-    // // Movimiento de entrenamiento
-    // movimientoRandom();
+    // ENTRENAMOS
+    let inputs = [
+        player.x, 
+        player.y, 
+        board[ghost.y - 1][ghost.x],
+        board[ghost.y][ghost.x + 1],
+        board[ghost.y + 1][ghost.x],
+        board[ghost.y][ghost.x - 1],
+    ];
+
+    // Entrenamos nuestras neuronas
+    if(neuronaActual < 10) {
+        movimientoRandom();
+        makeMove(poblacion[neuronaActual], inputs); 
+        poblacion[neuronaActual].distancia = Math.pow(player.x - player.y, 2) + Math.pow(ghost.x - ghost.y, 2); 
+        poblacion[neuronaActual].distancia = Math.sqrt(poblacion[neuronaActual].distancia);
+        movimientoActual++;
+    }
+
+    // Cuando terminamos de entrenar seleccionamos a las mejores neuronas
+    // y las mutamos un poco
+    else {
+        console.log(poblacion);
+    }
+
+    if(movimientoActual >= 50) {
+        player = {x: 1, y: 1};
+        ghost = {x: 13, y: 13};
+        movimientoActual = 0; 
+        neuronaActual++;
+        player = {x: 1, y: 1};
+        ghost = {x: 13, y: 13};
+    }
 
 });
 
@@ -87,7 +122,7 @@ function movimientoRandom() {
         next_pos = {x: next_x, y: next_y}; 
     }
 
-    if(!jsonEqual(next_pos, ghost[0]) && !jsonEqual(next_pos, ghost[1])) {
+    if(!jsonEqual(next_pos, ghost) && !jsonEqual(next_pos, ghost)) {
         last_position = player; 
         player = next_pos;
     }
@@ -112,11 +147,11 @@ function posicionRandom() {
 // Mueve al fantasma si la posición es valida
 function moveGhost(dir) {
     
-    next_x = ghost[0].x + direcciones[dir].x; 
-    next_y = ghost[0].y + direcciones[dir].y; 
+    next_x = ghost.x + direcciones[dir].x; 
+    next_y = ghost.y + direcciones[dir].y; 
 
     if(board[next_y][next_x] == 0) {
-        ghost[0] = {x: next_x, y: next_y}; 
+        ghost = {x: next_x, y: next_y}; 
     }
 
 }
