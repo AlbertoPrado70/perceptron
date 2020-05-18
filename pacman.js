@@ -63,23 +63,23 @@ app.ticker.add(delta => {
     graphics.endFill();
 
     // ENTRENAMOS
-    let inputs = [
-        player.x, 
-        player.y, 
-        board[ghost.y - 1][ghost.x],
-        board[ghost.y][ghost.x + 1],
-        board[ghost.y + 1][ghost.x],
-        board[ghost.y][ghost.x - 1],
-    ];
+    // let inputs = [
+    //     player.x, 
+    //     player.y, 
+    //     board[ghost.y - 1][ghost.x],
+    //     board[ghost.y][ghost.x + 1],
+    //     board[ghost.y + 1][ghost.x],
+    //     board[ghost.y][ghost.x - 1],
+    // ];
 
     // Entrenamos nuestras neuronas
     // movimientoRandom(); 
-    makeMove(neuron, inputs);
+    // makeMove(neuron, inputs);
 
-    neuron.distancia = Math.pow(player.x - ghost.x, 2) + Math.pow(player.y - ghost.y, 2); 
-    neuron.distancia = Math.sqrt(neuron.distancia);
+    // neuron.distancia = Math.pow(player.x - ghost.x, 2) + Math.pow(player.y - ghost.y, 2); 
+    // neuron.distancia = Math.sqrt(neuron.distancia);
 
-    updateWeights(neuron);
+    // updateWeights(neuron);
 
 });
 

@@ -14,3 +14,24 @@ h1, h2, h3, h4, h5, h6 {
     color: #000000;
     font-weight: 400;
 }
+
+.perceptron {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 22px;
+}
+
+.perceptron-form {
+    width: 100%;
+    box-sizing: border-box;
+    margin-right: 28px;
+}
+
+.perceptron-form input {
+    width: 100%;
+    padding: 22px; 
+    border-style: none;
+    border-bottom: 1px solid #35d8a2;
+    box-sizing: border-box;
+    margin-bottom: 22px;
+}
