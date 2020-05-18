@@ -25,25 +25,56 @@ function makeMove(neuron, inputs) {
     for(let row = 0; row < neuron.weights_1.length; row++) {
         neuron.output_1[row] = dot(neuron.weights_1[row], inputs);
         neuron.output_1[row] += neuron.bias_1[row];
-        neuron.output_1[row] = relu(neuron.output_1[row]);
+        neuron.output_1[row] = sigmoid(neuron.output_1[row]);
     }
 
     for(let row = 0; row < neuron.weights_2.length; row++) {
         neuron.output_2[row] = dot(neuron.weights_2[row], neuron.output_1);
         neuron.output_2[row] += neuron.bias_2[row];
-        neuron.output_2[row] = relu(neuron.output_2[row]);
+        neuron.output_2[row] = sigmoid(neuron.output_2[row]);
     }
 
     for(let row = 0; row < neuron.output_weights.length; row++) {
         neuron.outputs[row] = dot(neuron.output_weights[row], neuron.output_2);
         neuron.outputs[row] += neuron.output_bias[row];
-        neuron.outputs[row] = relu(neuron.outputs[row]);
+        neuron.outputs[row] = sigmoid(neuron.outputs[row]);
     }
 
     // Seleccionamos la salida
     move = indexOfMaxValue = neuron.outputs.reduce((iMax, x, i, arr) => x > arr[iMax] ? i : iMax, 0);
 
     moveGhost(move);
+
+}
+
+// Actualizamos los pesos 
+function updateWeights(neuron) {
+
+    // Calculamos el error
+    let error = Math.abs(0 - neuron.distancia);
+    console.log(`Actualizando > error: ${error}; distancia: ${neuron.distancia}`);
+
+    // Actualizamos con el error
+    for(let row = 0; row < neuron.weights_1.length; row++) {
+        for(let i = 0; i < neuron.weights_1[row].length; i++) {
+            neuron.weights_1[row][i] += 0.0005 * error;
+            neuron.bias_1[row][i] += 0.0005 * error;
+        }
+    }
+
+    for(let row = 0; row < neuron.weights_2.length; row++) {
+        for(let i = 0; i < neuron.weights_2[row].length; i++) {
+            neuron.weights_2[row][i] += 0.0005 * error;
+            neuron.bias_2[row][i] += 0.0005 * error;
+        }
+    }
+
+    for(let row = 0; row < neuron.output_weights.length; row++) {
+        for(let i = 0; i < neuron.output_weights[row].length; i++) {
+            neuron.output_weights[row][i] += 0.0005 * error;
+            neuron.output_bias[row][i] += 0.0005 * error;
+        }
+    }
 
 }
 

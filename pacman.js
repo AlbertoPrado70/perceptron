@@ -2,7 +2,6 @@ const CANVAS_SIZE = 480;
 const BOARD_SIZE = 15;
 const TILE_SIZE = 32;
 
-let fitness = 0;
 let player = {x: 1, y: 1}; 
 let last_position = {x: 1, y: 1}; 
 let ghost = {x: 13, y: 13};
@@ -33,14 +32,7 @@ let graphics = new PIXI.Graphics();
 app.stage.addChild(graphics);
 
 // Creamos nuestra población de neuronas
-let poblacion = [];
-let mejorNeurona = createNeuron();
-for(let i = 0; i < 20; i++) {
-    poblacion[i] = createNeuron();
-}
-
-let neuronaActual = 0; 
-let movimientoActual = 0;
+let neuron = createNeuron(); 
 
 // BUCLE PRINCIPAL
 app.ticker.add(delta => {
@@ -81,28 +73,13 @@ app.ticker.add(delta => {
     ];
 
     // Entrenamos nuestras neuronas
-    if(neuronaActual < 10) {
-        movimientoRandom();
-        makeMove(poblacion[neuronaActual], inputs); 
-        poblacion[neuronaActual].distancia = Math.pow(player.x - player.y, 2) + Math.pow(ghost.x - ghost.y, 2); 
-        poblacion[neuronaActual].distancia = Math.sqrt(poblacion[neuronaActual].distancia);
-        movimientoActual++;
-    }
+    // movimientoRandom(); 
+    makeMove(neuron, inputs);
 
-    // Cuando terminamos de entrenar seleccionamos a las mejores neuronas
-    // y las mutamos un poco
-    else {
-        console.log(poblacion);
-    }
+    neuron.distancia = Math.pow(player.x - ghost.x, 2) + Math.pow(player.y - ghost.y, 2); 
+    neuron.distancia = Math.sqrt(neuron.distancia);
 
-    if(movimientoActual >= 50) {
-        player = {x: 1, y: 1};
-        ghost = {x: 13, y: 13};
-        movimientoActual = 0; 
-        neuronaActual++;
-        player = {x: 1, y: 1};
-        ghost = {x: 13, y: 13};
-    }
+    updateWeights(neuron);
 
 });
 
