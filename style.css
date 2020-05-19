@@ -18,14 +18,14 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 strong {
-    color: #1b53bb;
+    color: #0cb683;
     font-weight: 500;
 }
 
 .canvas {
-    display: flex;
+    display: grid;
     width: 100%; 
-    justify-content: space-between;
+    grid-template-columns: 1fr 1fr;
 }
 
 .overlay {
@@ -89,4 +89,31 @@ strong {
     100% {
         opacity: 1;
     }
+}
+
+canvas {
+    box-shadow: 0 0 10px #0002;
+}
+
+
+button {
+    background-color: #0cb683;
+    color: #fff;
+    padding: 12px 34px;
+    border-style: none;
+    box-shadow: 0 0 20px #0003;
+}
+
+.controles {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    column-gap: 12px;
+    margin: 32px 0 22px 0;
+}
+
+input {
+    background-color: #fff;
+    padding: 18px 12px;
+    border-style: none;
+    box-shadow: 0 0 20px #0001;
 }

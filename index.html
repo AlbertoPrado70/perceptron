@@ -28,11 +28,18 @@
         </p>
 
         <div class="controles">
+            <input type="text" placeholder="Velocidad de aprendizaje">
+            <input type="text" class="error_modelo" placeholder="Error">
+            <input type="number" class="dataset_length" placeholder="Elementos entrenamiento">
             <button class="entrenar"> Entrenar </button>
-            <button class="predecir"> Predecir </button>
         </div>
 
-        <div class="canvas" style="margin-top: 48px;"></div>
+        <div class="canvas">
+            <h2 style="margin-bottom: 10px; font-size: 18px;"> Entrada </h2>
+            <h2 style="margin-bottom: 10px; font-size: 18px;"> Error (iteración, error) </h2>
+        </div>
+
+        <h2 style="padding: 12px; border: 1px solid #cacaca;"> Predicción: <strong class="prediccion"></strong> </h2>
 
         <div class="overlay" style="display: none;">
             <p style="color: #fff; font-size: 28px;"> Adquiriendo datos para el entrenamiento </p>
@@ -41,6 +48,11 @@
                 <div class="double-bounce2"></div>
             </div>
         </div>
+
+        <footer style="border-top: 1px solid #cacaca; margin-top: 38px; padding: 22px 0;">
+            <p style="font-size: 14px; margin: 0;"> Pagina elaborada por Luis Alberto Prado Torres </p>
+            <p style="font-size: 14px; margin: 0;"> Seminario de Inteligencia Artificial </p>
+        </footer>
 
         <script src="app.js"></script>
         

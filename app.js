@@ -33,6 +33,7 @@ limpiarCanvas();
 // y los pasamos al canvas_input despues de dibujarlos
 let draw_square = false; 
 let entrenando = false; 
+let graficar = false;
 let totalEntrenamiento = 0;
 let numeroActual = 0;
 let error_iteraciones = [];
@@ -40,8 +41,21 @@ let error_iteraciones = [];
 
 // Evento de mouse. Cuando presionen un boton del mouse comenzamos a dibujar en
 // canvas y cuando lo liberen eliminamos los eventos
-document.addEventListener("mousedown", () => draw_square = true);
-document.addEventListener("mouseup", () => draw_square = false);
+document.querySelector("canvas").addEventListener("mousedown", () => {
+    draw_square = true;
+    limpiarCanvas();
+});
+
+// Cuando dejan de dibujar en el canvas realizamos la predicción
+document.querySelector("canvas").addEventListener("mouseup", () => {
+    draw_square = false;
+    imprimeMatriz(canvas_input);
+    let a = modelo.run(canvas_input);
+    var indexOfMaxValue = a.reduce((iMax, x, i, arr) => x > arr[iMax] ? i : iMax, 0);
+    document.querySelector(".prediccion").innerHTML = indexOfMaxValue;
+    console.log(a);
+    console.log(indexOfMaxValue);
+});
 
 // Loop principal. Actualizamos el canvas con el dibujo que hace el usuario y 
 // almacenamos los valores en el canvas_input
@@ -61,15 +75,24 @@ canvas.ticker.add(delta => {
         
     }
 
-    if(entrenando && numeroActual < dataset.training.length) {
+    if(entrenando) {
 
         for(let i = 0; i < dataset.training[numeroActual].input.length; i++) {
             canvas_input[i] = (dataset.training[numeroActual].input[i] > 0) ? 1 : 0;
         }
 
-        numeroActual++;
+        if (numeroActual < dataset.training.length - 1) {
+            numeroActual ++
+        }
+
+        else {
+            entrenando = false;
+            limpiarCanvas();
+        }
 
     }
+
+    
 
     graphics.clear();
 
@@ -93,7 +116,7 @@ grafica.stage.addChild(g);
 grafica.renderer.backgroundColor = 0xdadada;
 document.querySelector(".canvas").appendChild(grafica.view);
 let error_actual = 0; 
-grafica.ticker.maxFPS = 30;
+grafica.ticker.maxFPS = 15;
 
 grafica.ticker.add(delta => {
 
@@ -110,19 +133,25 @@ grafica.ticker.add(delta => {
         g.lineTo(680, i);
     }
 
-    if(entrenando) {
+    g.lineStyle(1, 0x000000);
+    g.moveTo(10, 0); 
+    g.lineTo(10, 280);
+    g.moveTo(0, 140); 
+    g.lineTo(680, 140);
+
+    if(graficar) {
     
         g.lineStyle(1, 0x0000ff);
 
         for(let i = 0; i < error_actual; i++) {
             
-            let x1 = i * 20; 
-            let y1 = error_iteraciones[i] * 250;
-            let x2 = (i + 1) * 20;
-            let y2 = error_iteraciones[i + 1] * 250;
+            let x1 = scale(i, 0, error_iteraciones.length, 0, 680); 
+            let y1 = scale(error_iteraciones[i], 0, 0.25, 0, 280);
+            let x2 = scale(i + 1, 0, error_iteraciones.length, 0, 680); 
+            let y2 = scale(error_iteraciones[i + 1], 0, 0.25, 0, 280);
 
-            g.moveTo(x1, 50 - y1);
-            g.lineTo(x2, 50 - y2);
+            g.moveTo(x1 + 10, 140 - y1);
+            g.lineTo(x2 + 10, 140 - y2);
 
         }
 
@@ -132,30 +161,23 @@ grafica.ticker.add(delta => {
 
 })
 
-// Añadimos los cuadros al canvas_input y eliminamos todo el contenido del canvas
-// y squares. Usamos la red neuronal para predecir que numero es
-document.querySelector(".predecir").addEventListener("click", () => {
-    imprimeMatriz(canvas_input);
-    let a = modelo.run(canvas_input);
-    var indexOfMaxValue = a.reduce((iMax, x, i, arr) => x > arr[iMax] ? i : iMax, 0);
-    console.log(a);
-    console.log(indexOfMaxValue);
-    for(let i = 0; i < NEURAL_INPUTS; i++) {
-        canvas_input[i] = 0;
-    }
-})
-
 // Comienza el entrenamiento de nuestra red neuronal. Antes de entrenar
 // mostramos el contenido de cada entrada en el canvas 
 document.querySelector(".entrenar").addEventListener("click", () => {
 
     document.querySelector(".overlay").style.display = "flex";
-    
+    error_iteraciones = [];
+    graficar = false;
+
     setTimeout(() => {
-        modelo.train(dataset.training, {logPeriod: 1, log: detail => error_iteraciones.push(detail.error)});
+        let dataset_length = document.querySelector(".dataset_length").value;
+        dataset = mnist.set(dataset_length, 10);
+        let error = modelo.train(dataset.training, {logPeriod: 1, log: detail => error_iteraciones.push(detail.error)});
+        document.querySelector(".error_modelo").value = "Error: " + error_iteraciones[error_iteraciones.length - 1];
         entrenando = true; 
+        graficar = true; 
         document.querySelector(".overlay").style.display = "none";
-    }, 1000);
+    }, 2500);
 
 })
 
@@ -182,4 +204,9 @@ function limpiarCanvas() {
     for(let i = 0; i < NEURAL_INPUTS; i++) {
         canvas_input[i] = 0;
     }
+}
+
+// Función para convertir un valor a otro rango
+const scale = (num, in_min, in_max, out_min, out_max) => {
+    return (num - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
