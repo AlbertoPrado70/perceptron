@@ -4,34 +4,46 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title> PACMAN GA </title>
+        <title> Perceptron </title>
         <link rel="stylesheet" href="style.css">
+        <script src="https://unpkg.com/brain.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mnist/1.1.0/mnist.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/5.2.4/pixi.js"></script>
-        <script src="https://cdn.jsdelivr.net/gh/nicolaspanel/numjs@0.15.1/dist/numjs.min.js"></script>
     </head>
 
     <body>
-        
-        <h1> MLP (Multilayer perceptron) y algoritmos geneticos </h1>
-        <p> Las redes neuronales artificiales (también conocidas como sistemas conexionistas) son un modelo computacional vagamente inspirado en el comportamiento observado en su homólogo biológico1​. Consiste en un conjunto de unidades, llamadas neuronas artificiales, conectadas entre sí para transmitirse señales. La información de entrada atraviesa la red neuronal (donde se somete a diversas operaciones) produciendo unos valores de salida. </p>
 
-        <div class="perceptron">
-            <form class="perceptron-form">
-                <h2 style="margin-top: 0;"> Hiperparametros </h2>
-                <input type="text" placeholder="Puntos"> 
-                <input type="text" placeholder="Velocidad de entrenamiento"> 
-                <input type="text" placeholder="Entrenamiento"> 
-                <input type="submit" value="Entrenar">
-            </form>
+        <h1 style="margin: 0; margin-bottom: -10px; font-size: 42px;"> Perceptron multicapa </h1>
+        <h2 style="margin: 0; margin-bottom: 24px; font-size: 28px;"> para el reconocimiento de numeros </h2>
+
+        <p> 
+            Las <strong> redes neuronales artificiales </strong> son sistemas computacionales basados en el funcionamiento de la neurona humana. La conexion 
+            de un gran numero de neuronas artificiales le proporcionan a las redes neuronales la capacidad de <strong> aprender </strong> a resolver problemas 
+            sin una programación explicita. 
+        </p>
+
+        <p>
+            Uno de los pasos mas importantes de las redes neuronales es el <strong> entrenamiento. </strong> Para que una red neuronal pueda reconocer 
+            patrones es necesario suministrarle una gran cantidad de información normalizada y correctamente clasificada. 
+        </p>
+
+        <div class="controles">
+            <button class="entrenar"> Entrenar </button>
+            <button class="predecir"> Predecir </button>
         </div>
 
-        <div class="pacman"></div>
+        <div class="canvas" style="margin-top: 48px;"></div>
 
-        <!-- Scripts -->
-        <script src="perceptron.js"></script>
-        <script src="neuron.js"></script>
-        <script src="pacman.js"></script>
+        <div class="overlay" style="display: none;">
+            <p style="color: #fff; font-size: 28px;"> Adquiriendo datos para el entrenamiento </p>
+            <div class="spinner">
+                <div class="double-bounce1"></div>
+                <div class="double-bounce2"></div>
+            </div>
+        </div>
 
+        <script src="app.js"></script>
+        
     </body>
 
 </html>
